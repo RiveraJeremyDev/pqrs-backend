@@ -7,7 +7,7 @@ class Usuario(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     nombre = Column(String, nullable=False)
-    telefono = Column(String, unique=True)
+    telefono = Column(String, unique=True, nullable=False)
     correo = Column(String, nullable=False)
     documento = Column(String)
     programa = Column(String)
