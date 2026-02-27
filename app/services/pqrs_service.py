@@ -11,6 +11,7 @@ class PqrsService:
 
         usuario = Usuario(
             nombre=data.nombre,
+            telefono=data.telefono,
             correo=data.correo,
             documento=data.documento,
             programa=data.programa
