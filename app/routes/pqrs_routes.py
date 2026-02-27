@@ -7,10 +7,10 @@ from app.models.pqrs import Pqrs
 import requests
 import os
 
-TINY_LLAMA_URL = "https://cd4a-34-66-41-63.ngrok-free.app/generate"
+TINY_LLAMA_URL = "https://7e13-34-32-233-23.ngrok-free.app/generate"
 
 WHATSAPP_TOKEN = os.getenv("WHATSAPP_TOKEN")
-PHONE_NUMBER_ID = os.getenv("PHONE_NUMBER_ID")
+PHONE_NUMBER_ID = os.getenv("573216605088")
 
 router = APIRouter()
 
