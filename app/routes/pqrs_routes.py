@@ -90,13 +90,13 @@ def enviar_whatsapp(numero, mensaje):
 @router.post("/api/pqrs")
 async def recibir_pqrs(data: dict):
 
-    # 1️⃣ Generar respuesta IA
+    # 1 Generar respuesta IA
     respuesta_ia = generar_respuesta_ia(data)
 
-    # 2️⃣ Enviar por WhatsApp al número que el usuario digitó
+    # 2 Enviar por WhatsApp al número que el usuario digitó
     enviar_whatsapp(data["telefono"], respuesta_ia)
 
-    # 3️⃣ Generar radicado (ejemplo simple)
+    # 3 Generar radicado (ejemplo simple)
     import uuid
     radicado = str(uuid.uuid4())[:8]
 
