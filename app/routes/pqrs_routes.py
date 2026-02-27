@@ -7,7 +7,7 @@ from app.models.pqrs import Pqrs
 import requests
 import os
 
-TINY_LLAMA_URL = "https://7e13-34-32-233-23.ngrok-free.app/generate"
+TINY_LLAMA_URL = "https://droughty-tropologically-venessa.ngrok-free.dev/chat"
 
 WHATSAPP_TOKEN = os.getenv("EAAMt3dqxU8QBQwtQdEjzfOVG2njMSFEXCPNUir5Om5ce9dlIPaf1ZBDETxOuiOrBQ5Pey9Gbkm662EDK2tfU2HpmZCE3mX9rEfpyOkRMIgqeONlMaK7y2ZCXpsE9vWUGndhXjTSLerqdkIPMcySSYF2J0E31jCZANoqtFAhciU3kGtIWAjW7eLi4YGhUJc0PHriPSwX6yX6kkcVCw4rHlPyEmDPlwa0Eije6mg8ZAZA7RBBJxC2pi3ArsZC1VuQWClrr5RTJnUujGoutf55RplXKDa9HraybZBaX4ZA4UDAZDZD")
 PHONE_NUMBER_ID = os.getenv("938175122722689")
