@@ -4,10 +4,15 @@ from app.config.database import SessionLocal
 from app.schemas.pqrs_schema import PqrsCreate
 from app.services.pqrs_service import PqrsService
 from app.models.pqrs import Pqrs
+from fastapi import FastAPI
 import requests
 import os
 
+app = FastAPI()
+
 TINY_LLAMA_URL = "https://droughty-tropologically-venessa.ngrok-free.dev/chat"
+COLAB_URL = "https://droughty-tropologically-venessa.ngrok-free.dev/"
+VERIFY_TOKEN = "3AGAjRHme5jToCTO8YlswsLQQZl_6CPv17AGFqiQsZ3bCTJNM"
 
 WHATSAPP_TOKEN = os.getenv("EAAMt3dqxU8QBQwtQdEjzfOVG2njMSFEXCPNUir5Om5ce9dlIPaf1ZBDETxOuiOrBQ5Pey9Gbkm662EDK2tfU2HpmZCE3mX9rEfpyOkRMIgqeONlMaK7y2ZCXpsE9vWUGndhXjTSLerqdkIPMcySSYF2J0E31jCZANoqtFAhciU3kGtIWAjW7eLi4YGhUJc0PHriPSwX6yX6kkcVCw4rHlPyEmDPlwa0Eije6mg8ZAZA7RBBJxC2pi3ArsZC1VuQWClrr5RTJnUujGoutf55RplXKDa9HraybZBaX4ZA4UDAZDZD")
 PHONE_NUMBER_ID = os.getenv("938175122722689")
@@ -104,3 +109,51 @@ async def recibir_pqrs(data: dict):
         "mensaje": "PQRS recibida",
         "radicado": radicado
     }
+
+@app.get("/webhook")
+async def verify(
+    hub_mode: str = None,
+    hub_challenge: str = None,
+    hub_verify_token: str = None,
+):
+    if hub_verify_token == VERIFY_TOKEN:
+        return int(hub_challenge)
+    return {"error": "Token inválido"}
+
+@app.post("/webhook")
+async def recibir_mensaje(request: Request):
+    data = await request.json()
+
+    try:
+        mensaje = data["entry"][0]["changes"][0]["value"]["messages"][0]["text"]["body"]
+        numero = data["entry"][0]["changes"][0]["value"]["messages"][0]["from"]
+
+        # 🔥 Enviar mensaje a Colab
+        respuesta = requests.post(
+            COLAB_URL,
+            json={"mensaje": mensaje}
+        ).json()["respuesta"]
+
+        enviar_whatsapp(numero, respuesta)
+
+    except:
+        pass
+
+    return {"status": "ok"}
+
+def enviar_whatsapp(numero, texto):
+    url = "https://graph.facebook.com/v19.0/TU_PHONE_NUMBER_ID/messages"
+
+    headers = {
+        "Authorization": "Bearer TU_ACCESS_TOKEN",
+        "Content-Type": "application/json"
+    }
+
+    data = {
+        "messaging_product": "whatsapp",
+        "to": numero,
+        "type": "text",
+        "text": {"body": texto}
+    }
+
+    requests.post(url, headers=headers, json=data)
