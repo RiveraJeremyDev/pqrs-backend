@@ -4,6 +4,13 @@ from app.config.database import SessionLocal
 from app.schemas.pqrs_schema import PqrsCreate
 from app.services.pqrs_service import PqrsService
 from app.models.pqrs import Pqrs
+import requests
+import os
+
+TINY_LLAMA_URL = "https://cd4a-34-66-41-63.ngrok-free.app/generate"
+
+WHATSAPP_TOKEN = os.getenv("WHATSAPP_TOKEN")
+PHONE_NUMBER_ID = os.getenv("PHONE_NUMBER_ID")
 
 router = APIRouter()
 
@@ -43,3 +50,57 @@ def listar_pqrs(
     resultados = query.all()
 
     return resultados
+
+def generar_respuesta_ia(datos):
+
+    payload = {
+        "tipo": datos["tipo"],
+        "nombre": datos["nombre"],
+        "mensaje": datos["mensaje"],
+        "programa": datos.get("programa", ""),
+        "telefono": datos["telefono"]
+    }
+
+    r = requests.post(TINY_LLAMA_URL, json=payload, timeout=60)
+
+    return r.json()["respuesta"]
+
+def enviar_whatsapp(numero, mensaje):
+
+    url = f"https://graph.facebook.com/v19.0/{PHONE_NUMBER_ID}/messages"
+
+    headers = {
+        "Authorization": f"Bearer {WHATSAPP_TOKEN}",
+        "Content-Type": "application/json"
+    }
+
+    data = {
+        "messaging_product": "whatsapp",
+        "to": numero,
+        "type": "text",
+        "text": {
+            "body": mensaje
+        }
+    }
+
+    response = requests.post(url, headers=headers, json=data)
+
+    print("WhatsApp response:", response.text)
+
+@router.post("/api/pqrs")
+async def recibir_pqrs(data: dict):
+
+    # 1️⃣ Generar respuesta IA
+    respuesta_ia = generar_respuesta_ia(data)
+
+    # 2️⃣ Enviar por WhatsApp al número que el usuario digitó
+    enviar_whatsapp(data["telefono"], respuesta_ia)
+
+    # 3️⃣ Generar radicado (ejemplo simple)
+    import uuid
+    radicado = str(uuid.uuid4())[:8]
+
+    return {
+        "mensaje": "PQRS recibida",
+        "radicado": radicado
+    }
